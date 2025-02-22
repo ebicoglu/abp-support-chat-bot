@@ -20,7 +20,7 @@ class Program
     //TODO UPDATE THESE OPTIONS
     //------------------------------------------------------------------------------------------------
     public static string OutputPdfPath = $"D:\\temp\\abp-support-{DateTime.Now:yyyy-MM-dd}.pdf";
-    public static string ConnectionString = "Host=abp-io-server.postgres.database.azure.com;Port=5432;Database=AbpIoPlatform;Username=abpioadmin;Password=nckSdf03j5nbX*dXa22;";
+    public static string ConnectionString = "...Enter-Here...";
     public static int? MaxRecordCount = null;
     public static bool? OnlyAcceptedAnswers = true;
     //------------------------------------------------------------------------------------------------
@@ -113,7 +113,17 @@ WHERE
 
     private static void AddFirstPage(Document document)
     {
-        var p = AddCoverPage();
+        var s = "THIS DOCUMENT CONTAINS Q&A " + Environment.NewLine +
+                "ON TECHNICAL ISSUES RELATED TO ABP " + Environment.NewLine +
+                "IT IS RETRIEVED FROM https://abp.io/support/ " + Environment.NewLine +
+               (OnlyAcceptedAnswers.HasValue && OnlyAcceptedAnswers.Value ? "ONLY ACCEPTED ANSWERS ARE INCLUDED " : "") + Environment.NewLine +
+                $"CREATED ON {DateTime.Now:yyyy-MM-dd}";
+
+        var p = new Paragraph(s);
+        p.SetFontSize(16);
+        p.SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD));
+        p.SetBorder(new SolidBorder(DeviceGray.BLACK, 2));
+        p.SetPadding(20);
 
         // Get the page size
         var pageSize = document.GetPdfDocument().GetDefaultPageSize();
@@ -126,22 +136,6 @@ WHERE
         p.SetVerticalAlignment(VerticalAlignment.MIDDLE);
 
         document.Add(p);
-    }
-
-    private static Paragraph AddCoverPage()
-    {
-        var s = "THIS DOCUMENT CONTAINS Q&A " + Environment.NewLine +
-                "ON TECHNICAL ISSUES RELATED TO ABP " + Environment.NewLine +
-                "IT IS RETRIEVED FROM https://abp.io/support/ " + Environment.NewLine +
-                (OnlyAcceptedAnswers.HasValue && OnlyAcceptedAnswers.Value ? "ONLY ACCEPTED ANSWERS ARE INCLUDED " : "") + Environment.NewLine +
-                $"CREATED ON {DateTime.Now:yyyy-MM-dd}";
-
-        var p = new Paragraph(s);
-        p.SetFontSize(16);
-        p.SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD));
-        p.SetBorder(new SolidBorder(DeviceGray.BLACK, 2));
-        p.SetPadding(20);
-        return p;
     }
 
     private static void AddHtmlToDocoument(Document document, string html)
