@@ -32,10 +32,20 @@ public class QuestionFetcher
         InitializeFonts();
     }
 
+    private void ValidateSettings()
+    {
+        if (string.IsNullOrWhiteSpace(AppSettings.ConnectionString))
+        {
+            throw new ApplicationException("ConnectionString is not set in AppSettings.cs!");
+        }
+    }
+
     public string? CreatePdf()
     {
         try
         {
+            ValidateSettings();
+
             using (var writer = new PdfWriter(AppSettings.OutputPdfPath))
             {
                 using (var pdf = new PdfDocument(writer))
@@ -72,7 +82,7 @@ public class QuestionFetcher
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
             return null;
         }
     }
